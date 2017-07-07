@@ -1,0 +1,33 @@
+pipeline:
+
+  build:
+    privileged: true
+    image: docker:1.11
+    environment:
+      - DOCKER_HOST=tcp://127.0.0.1:2375
+    commands:
+      - docker build -t pttg-bdd-base .
+    when:
+      event: push
+
+  push:
+    image: docker:1.11
+    environment:
+      - DOCKER_HOST=tcp://127.0.0.1:2375
+    commands:
+      - docker login -u="ukhomeofficedigital+pttg" -p=${DOCKER_PASSWORD} quay.io
+      - docker tag pttg-bdd-base quay.io/ukhomeofficedigital/pttg-bdd-base:${DRONE_COMMIT_SHA}
+      - docker tag pttg-bdd-base quay.io/ukhomeofficedigital/pttg-bdd-base:latest
+      - docker push quay.io/ukhomeofficedigital/pttg-bdd-base:${DRONE_COMMIT_SHA}
+      - docker push quay.io/ukhomeofficedigital/pttg-bdd-base:latest
+    when:
+      event: push
+      branch: master
+
+services:
+  dind:
+    image: docker:1.11-dind
+    privileged: true
+    command:
+      - "-s"
+      - "overlay"
