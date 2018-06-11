@@ -1,4 +1,4 @@
-FROM quay.io/ukhomeofficedigital/nodejs-base:v6.11.0-0
+FROM quay.io/ukhomeofficedigital/nodejs-base:v8.11.1
 
 RUN yum install -y bzip2
 RUN yum install -y fontconfig
